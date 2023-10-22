@@ -69,20 +69,7 @@ export function updateTimeCapsule(id: string, payload: TimeCapsulePayload): Resu
     });
 }
 
-$update;
-export function deleteTimeCapsule(id: string): Result<string, string> {
-    return match(timeCapsuleStorage.get(id), {
-        Some: (timeCapsule: TimeCapsule) => {
-            if (ic.caller().toString() !== timeCapsule.owner.toString()) {
-                return Result.Err<string, string>("You are not authorized to delete this TimeCapsule.");
-            }
 
-            timeCapsuleStorage.remove(id);
-            return Result.Ok<string, string>("TimeCapsule deleted successfully.");
-        },
-        None: () => Result.Err<string, string>("No TimeCapsule found with the provided id."),
-    });
-}
 
 globalThis.crypto = {
     //@ts-ignore
