@@ -7,7 +7,6 @@ type TimeCapsule = Record<{
     revealDate: nat64;
     owner: Principal;
     isRevealed: boolean;
-
 }>;
 
 type TimeCapsulePayload = Record<{
