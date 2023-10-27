@@ -1,0 +1,39 @@
+type CommunityTimeCapsule = record {
+  id : text;
+  memberMedia : vec Media;
+  owner : principal;
+  memberPrincipal : vec principal;
+  revealDate : nat64;
+  isRevealed : bool;
+};
+type CommunityTimeCapsulePayload = record {
+  media : vec Media;
+  members : vec principal;
+  revealDate : nat64;
+};
+type Media = record {
+  photoUrl : opt text;
+  message : opt text;
+  videoUrl : opt text;
+};
+type TimeCapsule = record {
+  id : text;
+  owner : principal;
+  message : text;
+  revealDate : nat64;
+  isRevealed : bool;
+};
+type TimeCapsulePayload = record {
+  imageurl : opt text;
+  message : text;
+  revealDate : nat64;
+  videourl : opt text;
+};
+type _AzleResult = variant { Ok : CommunityTimeCapsule; Err : text };
+type _AzleResult_1 = variant { Ok : TimeCapsule; Err : text };
+service : () -> {
+  createCommunityTimeCapsule : (CommunityTimeCapsulePayload) -> (_AzleResult);
+  createTimeCapsule : (TimeCapsulePayload) -> (_AzleResult_1);
+  retrieveTimeCapsule : (text) -> (_AzleResult_1) query;
+  updateTimeCapsule : (text, TimeCapsulePayload) -> (_AzleResult_1);
+}

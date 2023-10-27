@@ -1,6 +1,6 @@
-import {$update,$query,StableBTreeMap,Result,nat64,ic,Opt,Principal,Record, match} from "azle";
+// cannister code goes here
+import {$update,$query,Result,nat64,ic,Opt,Principal,Record, match,StableBTreeMap,Vec} from "azle";
 import { v4 as uuidv4 } from "uuid";
-
 type TimeCapsule = Record<{
     id: string;
     message: string;
@@ -14,10 +14,32 @@ type TimeCapsulePayload = Record<{
     revealDate: nat64;
     imageurl: Opt<string>;
     videourl: Opt<string>;
-}>; 
+}>;
+
+type Media = Record<{
+    message: Opt<string>;
+    photoUrl: Opt<string>;
+    videoUrl: Opt<string>;
+}>;
+
+type CommunityTimeCapsule = Record<{
+    id: string;
+    revealDate: nat64;
+    owner: Principal;
+    isRevealed: boolean;
+    memberPrincipal: Vec<Principal>;
+    memberMedia: Vec<Media>;
+}>;
+
+type CommunityTimeCapsulePayload = Record<{
+    revealDate: nat64;
+    members: Vec<Principal>; // Use Vec to define an array
+    media: Vec<Media>;
+}>;
+
 
 const timeCapsuleStorage = new StableBTreeMap<string, TimeCapsule>(0, 44, 1024);
-
+const communitytimecapsuleStorage = new StableBTreeMap<string, CommunityTimeCapsule>(1, 44, 1024); // TODO : Understand this fully and then complete this community functionality
 $update;
 export function createTimeCapsule(payload: TimeCapsulePayload): Result<TimeCapsule, string> {
     const timeCapsule: TimeCapsule = {
@@ -67,6 +89,34 @@ export function updateTimeCapsule(id: string, payload: TimeCapsulePayload): Resu
         None: () => Result.Err<TimeCapsule, string>("No TimeCapsule found with the provided id."),
     });
 }
+
+$update;
+export function createCommunityTimeCapsule(payload: CommunityTimeCapsulePayload): Result<CommunityTimeCapsule, string> {
+    // const membersMap = new StableBTreeMap<Principal, Media>(2,44,1024);
+    
+    // // // Initialize members map with the provided members
+    // // payload.members.forEach((member: Principal,index:number) => {
+    // //     membersMap.insert(member, payload.media[index]);
+    // // });
+
+    
+    const communityTimeCapsule: CommunityTimeCapsule = {
+        id: uuidv4(),
+        owner: ic.caller(),
+        isRevealed: false,
+        memberPrincipal: payload.members,
+        memberMedia: payload.media,
+        revealDate: payload.revealDate,
+       
+    };
+
+    communitytimecapsuleStorage.insert(communityTimeCapsule.id, communityTimeCapsule);
+    return Result.Ok(communityTimeCapsule);
+}
+
+
+// $update;
+// export function updateRevealDate()
 
 
 
