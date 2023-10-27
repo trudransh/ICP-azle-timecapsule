@@ -137,9 +137,9 @@ export function updateTimeCapsule(id: string, payload: TimeCapsulePayload): Resu
 $update;
 export function createCommunityTimeCapsule(payload: CommunityTimeCapsulePayload): Result<CommunityTimeCapsule, string> {
     const caller = ic.caller();
-    
+
     // Implement reentrancy protection and gas limit handling as needed
-    
+
     const communityTimeCapsule: CommunityTimeCapsule = {
         id: uuidv4(),
         owner: caller,
@@ -153,6 +153,52 @@ export function createCommunityTimeCapsule(payload: CommunityTimeCapsulePayload)
     api.createCommunityTimeCapsuleEvent({ caller, id: communityTimeCapsule.id, revealDate: communityTimeCapsule.revealDate });
 
     return Result.Ok(communityTimeCapsule);
+}
+
+// New Function 1: Get the current timestamp
+export function getCurrentTimestamp(): nat64 {
+    return ic.time();
+}
+
+// New Function 2: Check if a time capsule is revealed
+export function isTimeCapsuleRevealed(id: string): boolean {
+    const timeCapsule = timeCapsuleStorage.get(id);
+    return timeCapsule !== null && timeCapsule.isRevealed;
+}
+
+// New Function 3: Get the owner of a time capsule
+export function getTimeCapsuleOwner(id: string): Principal {
+    const timeCapsule = timeCapsuleStorage.get(id);
+    return timeCapsule !== null ? timeCapsule.owner : Principal.undefined;
+}
+
+// New Function 4: Check if a community time capsule is revealed
+export function isCommunityTimeCapsuleRevealed(id: string): boolean {
+    const communityTimeCapsule = communitytimecapsuleStorage.get(id);
+    return communityTimeCapsule !== null && communityTimeCapsule.isRevealed;
+}
+
+// New Function 5: Get the owner of a community time capsule
+export function getCommunityTimeCapsuleOwner(id: string): Principal {
+    const communityTimeCapsule = communitytimecapsuleStorage.get(id);
+    return communityTimeCapsule !== null ? communityTimeCapsule.owner : Principal.undefined;
+}
+
+// New Function 6: Get the reveal date of a time capsule
+export function getTimeCapsuleRevealDate(id: string): nat64 {
+    const timeCapsule = timeCapsuleStorage.get(id);
+    return timeCapsule !== null ? timeCapsule.revealDate : 0;
+}
+
+// New Function 7: Get the reveal date of a community time capsule
+export function getCommunityTimeCapsuleRevealDate(id: string): nat64 {
+    const communityTimeCapsule = communitytimecapsuleStorage.get(id);
+    return communityTimeCapsule !== null ? communityTimeCapsule.revealDate : 0;
+}
+
+// New Function 8: Get the total number of time capsules
+export function getTotalTimeCapsules(): nat64 {
+    return timeCapsuleStorage.size();
 }
 
 // Gas Estimation Function
